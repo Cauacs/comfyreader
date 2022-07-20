@@ -33,25 +33,26 @@ public class FeedService {
     //add feed to feed list
     public void addFeed(String urlString) {
         try{
-
             SyndFeedInput input = new SyndFeedInput();
             SyndFeed feed = input.build(new XmlReader(new URL(urlString)));
-            List<FeedItem> items = sortItems(feed);
-            feeds.add(new Feed(
+            List<FeedItem> items = normalizeItems(feed);
+            Feed newFeed = new Feed(
                     feed.getTitle(),
                     feed.getLink(),
                     feed.getDescription(),
                     feed.getCopyright(),
                     feed.getPublishedDate(),
                     items
-            ));
+            );
+            if(!feeds.contains(newFeed))
+                feeds.add(newFeed);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
     }
 
-    private List<FeedItem> sortItems(SyndFeed feed){
+    private List<FeedItem> normalizeItems(SyndFeed feed){
         List<FeedItem> items = new ArrayList<>();
         for (SyndEntry entry : (List<SyndEntry>) feed.getEntries()) {
             FeedItem item = new FeedItem(
@@ -68,7 +69,7 @@ public class FeedService {
         urls.forEach(this::addFeed);
     }
 
-    public List<Feed> findAll(){
+    public List<Feed> fetchFeed(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> optionalUser = userRepository.findByEmail(authentication.getName());
         optionalUser.ifPresentOrElse(

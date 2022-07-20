@@ -3,17 +3,20 @@ package xyz.comfyreader.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import xyz.comfyreader.models.RegistrationRequest;
 import xyz.comfyreader.models.Url;
 import xyz.comfyreader.models.User;
 import xyz.comfyreader.services.UserService;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
+
+
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
 public class UserController {
 
     private final UserService userService;
@@ -21,6 +24,7 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
 
     @GetMapping
     public List<User> findAll() {
@@ -44,6 +48,16 @@ public class UserController {
             userService.addUrl(url.url());
             return new ResponseEntity<> ("Created", HttpStatus.CREATED);
         }catch(Exception ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @DeleteMapping("/removeUrl")
+    public ResponseEntity<?> removeUrl(@RequestBody Url url) {
+        try{
+            userService.removeUrl(url.url());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch(Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

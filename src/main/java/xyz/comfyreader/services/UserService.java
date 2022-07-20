@@ -89,4 +89,26 @@ public class UserService implements UserDetailsService {
                 () -> {throw new IllegalStateException("User not found");}
         );
     }
+
+    public void removeUrl(String url) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> optionalUser = userRepository.findByEmail(authentication.getName());
+        optionalUser.ifPresentOrElse(
+                user -> {
+                    List<String> urls = user.urls();
+                    urls.remove(url);
+                    User updatedUser = new User(
+                            user._id(),
+                            user.firstName(),
+                            user.lastName(),
+                            user.email(),
+                            user.password(),
+                            user.created(),
+                            urls
+                    );
+                    userRepository.save(updatedUser);
+                },
+                () -> {throw new IllegalStateException(("User not found"));}
+        );
+    }
 }
