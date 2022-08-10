@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import xyz.comfyreader.models.AuthenticationRequest;
 import xyz.comfyreader.models.RegistrationRequest;
 import xyz.comfyreader.models.User;
 import xyz.comfyreader.repositories.UserRepository;
@@ -111,4 +113,11 @@ public class UserService implements UserDetailsService {
                 () -> {throw new IllegalStateException(("User not found"));}
         );
     }
+
+    public List<String> getUrls() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> optionalUser = userRepository.findByEmail(authentication.getName());
+        return optionalUser.get().urls();
+    }
+
 }

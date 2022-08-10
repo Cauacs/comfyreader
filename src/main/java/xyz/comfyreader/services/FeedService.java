@@ -7,6 +7,7 @@ import xyz.comfyreader.models.Feed;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,6 @@ public class FeedService {
 
     public FeedService(UserRepository userRepository) {
         this.userRepository = userRepository;
-
     }
 
 
@@ -77,5 +77,14 @@ public class FeedService {
                 () -> {throw new IllegalStateException("User not found");}
         );
         return feeds;
+    }
+
+
+    public List<FeedItem> fetchPosts() {
+        List<Feed> feeds = fetchFeed();
+        List<FeedItem> posts = new ArrayList<>();
+        feeds.forEach(feed -> posts.addAll(feed.items()));
+        Collections.shuffle(posts);
+        return posts;
     }
 }

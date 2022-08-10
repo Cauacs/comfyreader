@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import xyz.comfyreader.models.Feed;
+import xyz.comfyreader.models.FeedItem;
 import xyz.comfyreader.services.FeedService;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class FeedController {
     }
 
     @GetMapping
-    public List<Feed> fetchFeed() {
+    public List<Feed> fetchFeeds() {
         return service.fetchFeed();
     }
 
@@ -38,4 +39,8 @@ public class FeedController {
         return authentication.getName();
     }
 
+    @GetMapping("/posts")
+    public List<FeedItem> fetchPosts() {
+        return service.fetchPosts();
+    }
 }
